@@ -26,7 +26,7 @@ export default {
   flex: 1;
   padding: 20px;
   color: white;
-  background-color: #04243f;
+  background-color: #2d283d;
 
   .sidebar-item {
     margin: 50px 0px;

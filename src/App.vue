@@ -2,18 +2,20 @@
   <div class="main-container">
     <Sidebar />
     <MovieCard />
+    <!-- <Filters /> -->
   </div>
 </template>
 
 <script>
 import Sidebar from "./components/Sidebar.vue";
 import MovieCard from "./components/MovieCard.vue";
-
+// import Filters from "./components/Filters.vue"
 export default {
   name: "App",
   components: {
     Sidebar,
     MovieCard,
+    // Filters
   },
 };
 </script>
