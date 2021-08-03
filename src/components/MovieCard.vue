@@ -12,7 +12,14 @@
         </div>
         <div class="movie-details">
           <div class="movie-title">{{ movie.title }}</div>
-          <div class="movie-genre">{{ genreIds.filter((a)=>movie.genre_ids.includes(a.id)).map(x=>x.name).join(' | ') }}</div>
+          <div class="movie-genre">
+            {{
+              genreIds
+                .filter((a) => movie.genre_ids.includes(a.id)) // put this in a computed
+                .map((x) => x.name)
+                .join(" | ")
+            }}
+          </div>
           <div class="movie-vote">{{ movie.vote_average }}</div>
           <div class="movie-overview">{{ movie.overview }}</div>
           <div class="movie-release-date">{{ movie.release_date }}</div>
@@ -31,7 +38,12 @@ import SearchBox from "./SearchBox.vue";
 import FilterBox from "./FilterBox.vue";
 import { computed, reactive, onMounted, toRefs } from "vue";
 
+
+// TODO => pagination
+// TODO => Filter
+
 export default {
+  //use destructuring instead of data
   components: { SearchBox, FilterBox },
   setup() {
     onMounted(() => {
@@ -42,16 +54,10 @@ export default {
       movieList: [],
       genres: [],
       movieListNames: computed(() => {
-        //bu ne yapiyor yav
-        return pelin.movieList.map((movie) => (movie = movie.title));
+        return pelin.movieList.map((movie) => movie.title);
       }),
       genreIds: computed(() => {
         const genres = pelin.genres.map((genreId) => genreId);
-        // const movieGenreArr = pelin.movieList.map((movie) => movie.genre_ids.map((a) => a));
-
-        // console.log(genres.map(a=>a), "genre");
-        // console.log(movieGenreArr, "movieGenreArr");
-
         return genres;
       }),
     });
@@ -71,7 +77,7 @@ export default {
 
     function getGenres() {
       try {
-        const baseUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=248dc9b40688a8465ea9fe1b81ae549c`;
+        const baseUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=248dc9b40688a8465ea9fe1b81ae549c`; //todo use process.env
         fetch(`${baseUrl}`)
           .then((response) => response.json())
           .then((data) => {
@@ -107,6 +113,7 @@ export default {
       display: flex;
       background-color: white;
       width: 800px;
+      border-radius: 5px;
 
       .movie-image {
         flex: 1;
@@ -117,6 +124,8 @@ export default {
       .movie-details {
         position: relative;
         flex: 2;
+        padding-right: 30px;
+
         .movie-title {
           font-size: 25px;
           font-weight: bold;

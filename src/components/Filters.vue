@@ -21,6 +21,7 @@ export default {
   flex: 2;
   margin-top: 120px;
   padding-right: 30px;
+  
 }
 
 </style>
