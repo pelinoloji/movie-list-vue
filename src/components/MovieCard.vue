@@ -23,7 +23,27 @@
           <div class="movie-vote">{{ movie.vote_average }}</div>
           <div class="movie-overview">{{ movie.overview }}</div>
           <div class="movie-release-date">{{ movie.release_date }}</div>
+          <button class="button-primary">View details</button>
         </div>
+      </div>
+      <div class="pagination">
+        <span class="page-item">
+          <button
+            type="button"
+            class="pagination-number"
+            @click="previousPage()"
+          >
+            Previous
+          </button>
+        </span>
+        <span class="page-item">
+          <button type="button" class="pagination-number">{{ page }}</button>
+        </span>
+        <span class="page-item">
+          <button type="button" class="pagination-number" @click="nextPage()">
+            Next
+          </button>
+        </span>
       </div>
     </div>
     <div class="filter-container">
@@ -37,7 +57,6 @@
 import SearchBox from "./SearchBox.vue";
 import FilterBox from "./FilterBox.vue";
 import { computed, reactive, onMounted, toRefs } from "vue";
-
 
 // TODO => pagination
 // TODO => Filter
@@ -53,6 +72,8 @@ export default {
     const pelin = reactive({
       movieList: [],
       genres: [],
+      totalPage: null,
+      page: 0,
       movieListNames: computed(() => {
         return pelin.movieList.map((movie) => movie.title);
       }),
@@ -67,8 +88,10 @@ export default {
         const baseUrl = `https://api.themoviedb.org/3/discover/movie?api_key=248dc9b40688a8465ea9fe1b81ae549c`; //todo use process.env
         fetch(`${baseUrl}`)
           .then((response) => response.json())
-          .then((data) => {
-            pelin.movieList = data.results;
+          .then(({ results, total_pages, page }) => {
+            pelin.movieList = results;
+            pelin.totalPage = total_pages;
+            pelin.page = page;
           });
       } catch (error) {
         console.log(error);
@@ -80,15 +103,22 @@ export default {
         const baseUrl = `https://api.themoviedb.org/3/genre/movie/list?api_key=248dc9b40688a8465ea9fe1b81ae549c`; //todo use process.env
         fetch(`${baseUrl}`)
           .then((response) => response.json())
-          .then((data) => {
-            pelin.genres = data.genres;
+          .then(({ genres }) => {
+            pelin.genres = genres;
           });
       } catch (error) {
         console.log(error);
       }
     }
 
-    return { ...toRefs(pelin), getMovies, getGenres };
+    function nextPage() {
+      pelin.page < pelin.totalPage && pelin.page++;
+    }
+    function previousPage() {
+      pelin.page > 1 && pelin.page--;
+    }
+
+    return { ...toRefs(pelin), getMovies, getGenres, nextPage, previousPage };
   },
 };
 </script>
@@ -148,6 +178,31 @@ export default {
 
         .movie-release-date {
           color: #37d9ac;
+        }
+        .button-primary {
+          margin-top: 80px;
+          background-color: #37d9ac;
+          cursor: pointer;
+          border-radius: 5px;
+          border: none;
+          padding: 10px;
+          font-size: 16px;
+          &:hover {
+            background-color: #34f3;
+          }
+        }
+      }
+    }
+    .pagination {
+      text-align: center;
+
+      .pagination-number {
+        color: #37d9ac;
+        background-color: transparent;
+        border: 1px solid #37d9ac;
+        &:hover {
+          background-color: #37d9ac;
+          color: #fff;
         }
       }
     }

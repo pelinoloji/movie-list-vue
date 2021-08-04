@@ -1,42 +1,90 @@
 <template>
   <div class="filter-box">
-    <p>Movie</p>
     <div>
-      <p>Filter by Genres</p>
+      <button @click="isGenresExpanded()" class="filter-title">
+        + Filter by Genres
+      </button>
     </div>
-    <div>adsad</div>
-    <div>
-      <p>Filter by Rate</p>
-    </div>
-    <div v-for="movieVote in findMoviesVote" :key="movieVote">
-      <input type="checkbox" id="scales" name="scales" />
-      <label for="`${movieVote}`">{{ movieVote }}</label>
+    <div v-if="genresExpanded">
+      <div class="filter-result">test</div>
     </div>
     <div>
-      <p>Filter by Languages</p>
+      <button @click="isRateExpanded()" class="filter-title">
+        + Filter by Rate
+      </button>
     </div>
-    <div v-for="movieLanguage in findMovieLanguages" :key="movieLanguage">
-      <input type="checkbox" id="`${movieLanguage}`" name="scales" />
-      <label for="`${movieVote}`">{{ movieLanguage }}</label>
+    <div v-if="rateExpanded">
+      <div
+        v-for="movieVote in findMoviesVote"
+        :key="movieVote"
+        class="filter-result"
+      >
+        <input type="checkbox" id="rate" name="rate" />
+        <label for="`${movieVote}`">{{ movieVote }}</label>
+      </div>
+    </div>
+    <div>
+      <button @click="isLanguageExpanded()" class="filter-title">
+        + Filter by Languages
+      </button>
+    </div>
+    <div v-if="languageExpanded">
+      <div
+        v-for="movieLanguage in findMovieLanguages"
+        :key="movieLanguage"
+        class="filter-result"
+      >
+        <input type="checkbox" id="`${movieLanguage}`" name="language" />
+        <label for="`${movieVote}`">{{ movieLanguage }}</label>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { computed, reactive, toRefs } from "vue";
+
 export default {
   name: "FilterBox",
   props: {
     movieList: Object,
   },
-  computed: {
-    // TODO when I click the title, title should expand
-    findMoviesVote() {
-      return this.movieList.map((movie) => movie.vote_average);
-    },
-    findMovieLanguages() {
-      const languages = this.movieList.map((movie) => movie.original_language);
-      return new Set(languages);
-    },
+  setup(props) {
+    const pelin = reactive({
+      genresExpanded: false,
+      rateExpanded: false,
+      languageExpanded: false,
+      findMoviesVote: computed(() => {
+        return props.movieList.map((movie) => movie.vote_average);
+      }),
+      findMovieLanguages: computed(() => {
+        const languages = props.movieList.map(
+          (movie) => movie.original_language
+        );
+        return new Set(languages);
+      }),
+    });
+
+    function isGenresExpanded() {
+      pelin.genresExpanded = !pelin.genresExpanded;
+      // return pelin.genresExpanded;
+    }
+
+    function isRateExpanded() {
+      pelin.rateExpanded = !pelin.rateExpanded;
+      // return pelin.rateExpanded;
+    }
+
+    function isLanguageExpanded() {
+      pelin.languageExpanded = !pelin.languageExpanded;
+      // return pelin.languageExpanded;
+    }
+    return {
+      ...toRefs(pelin),
+      isGenresExpanded,
+      isRateExpanded,
+      isLanguageExpanded,
+    };
   },
 };
 </script>
@@ -46,5 +94,22 @@ export default {
   background-color: white;
   padding: 10px 20px;
   border-radius: 5px;
+
+  .filter-title {
+    border: none;
+    background-color: transparent;
+    font-size: 18px;
+    font-weight: bold;
+    color:#37d9ac
+  }
+
+  .filter-result {
+    margin: 10px;
+    font-size: 16px;
+  }
+
+  label {
+    margin-left: 5px;
+  }
 }
 </style>
